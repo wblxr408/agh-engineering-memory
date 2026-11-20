@@ -1,0 +1,43 @@
+{
+  "name": "@wblxr408/engineering-memory",
+  "version": "0.1.0",
+  "description": "Share one existing local Engineering Memory / Basic Memory service across AGH and Antigravity.",
+  "type": "module",
+  "license": "MIT",
+  "author": "wblxr408",
+  "homepage": "https://github.com/wblxr408/agh-engineering-memory",
+  "repository": { "type": "git", "url": "https://github.com/wblxr408/agh-engineering-memory" },
+  "keywords": ["agh-plugin", "basic-memory", "engineering-memory", "antigravity"],
+  "engines": { "node": ">=24.10" },
+  "exports": "./index.mjs",
+  "bin": { "agh-engineering-memory-mcp": "./bin/mcp.mjs" },
+  "files": ["index.mjs", "lib", "bin", "skills", "docs", "agh.market.json", "README.md", "LICENSE"],
+  "scripts": { "test": "node --test" },
+  "devDependencies": { "@sinclair/typebox": "0.34.33" },
+  "agnes": {
+    "hostProvidedExternals": { "@sinclair/typebox": "0.34.33" },
+    "provides": ["tool", "skills"],
+    "plugins": [{
+      "id": "ext:@wblxr408/engineering-memory/main",
+      "export": "main",
+      "apiRange": "^5.0.0",
+      "inject": ["tools", "skills"],
+      "configSchema": {
+        "type": "object",
+        "properties": {
+          "memoryHome": { "type": "string", "minLength": 1, "description": "Absolute existing service directory containing resource-endpoint.json; defaults to ~/.codex/services/engineering-memory" },
+          "project": { "type": "string", "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,127}$", "default": "main" },
+          "allowWrites": { "type": "boolean", "default": false },
+          "timeoutMs": { "type": "integer", "minimum": 1, "maximum": 145000, "default": 145000 }
+        },
+        "additionalProperties": false
+      },
+      "capabilities": {
+        "network": ["127.0.0.1"],
+        "filesystem": { "read": ["**/resource-endpoint.json"] },
+        "resources": ["skill"],
+        "tools": { "prefix": "engineering_memory_", "names": ["engineering_memory_search", "engineering_memory_read", "engineering_memory_save", "engineering_memory_write_status"] }
+      }
+    }]
+  }
+}
